@@ -72,6 +72,7 @@ public class AcController {
         List<Alecturer> alecturers = alecturerService.selectAle();
         map.addAttribute("al",alecturers);
         map.addAttribute("cid",cid);
+         System.out.println("++++++jiangshi");
         return "alSelect";
     }
     //查询所有的从教室
