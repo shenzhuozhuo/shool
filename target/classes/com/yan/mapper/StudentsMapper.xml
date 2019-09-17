@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yan.mapper.StudentsMapper">
+  <resultMap id="BaseResultMap" type="com.yan.entity.Students">
+    <id column="sid" jdbcType="INTEGER" property="sid" />
+    <result column="sName" jdbcType="VARCHAR" property="sname" />
+    <result column="home" jdbcType="VARCHAR" property="home" />
+    <association property="sc" javaType="Sc">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="cid" jdbcType="INTEGER" property="cid" />
+      <result column="sid" jdbcType="INTEGER" property="sid" />
+      <association property="aClass" javaType="Class">
+        <id column="cid" jdbcType="INTEGER" property="cid" />
+        <result column="classNname" jdbcType="VARCHAR" property="classnname" />
+        <result column="classData" jdbcType="DATE" property="classdata" />
+      </association>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    sid, sName, home
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from students
+    where sid = #{sid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from students
+    where sid = #{sid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yan.entity.Students">
+    insert into students (sid, sName, home
+      )
+    values (#{sid,jdbcType=INTEGER}, #{sname,jdbcType=VARCHAR}, #{home,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yan.entity.Students">
+    insert into students
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sid != null">
+        sid,
+      </if>
+      <if test="sname != null">
+        sName,
+      </if>
+      <if test="home != null">
+        home,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sid != null">
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="sname != null">
+        #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="home != null">
+        #{home,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yan.entity.Students">
+    update students
+    <set>
+      <if test="sname != null">
+        sName = #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="home != null">
+        home = #{home,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sid = #{sid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yan.entity.Students">
+    update students
+    set sName = #{sname,jdbcType=VARCHAR},
+      home = #{home,jdbcType=VARCHAR}
+    where sid = #{sid,jdbcType=INTEGER}
+  </update>
+  <select id="selectStu" resultMap="BaseResultMap">
+    SELECT st.sid,st.sName,st.home,c.classNname FROM students AS st
+    LEFT JOIN sc AS sc ON st.sid = sc.sid
+    LEFT JOIN class AS c ON sc.cid = c.cid
+  </select>
+</mapper>

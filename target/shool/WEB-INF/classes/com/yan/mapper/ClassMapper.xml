@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yan.mapper.ClassMapper">
+  <resultMap id="BaseResultMap" type="com.yan.entity.Class">
+    <id column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="classNname" jdbcType="VARCHAR" property="classnname" />
+    <result column="classData" jdbcType="DATE" property="classdata" />
+    <association property="ac" javaType="Ac">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="cid" jdbcType="INTEGER" property="cid" />
+      <result column="clid" jdbcType="INTEGER" property="clid" />
+      <result column="aid" jdbcType="INTEGER" property="aid" />
+
+      <association property="alecturer" javaType="Alecturer">
+        <id column="aid" jdbcType="INTEGER" property="aid" />
+        <result column="aName" jdbcType="VARCHAR" property="aname" />
+        <result column="sex" jdbcType="INTEGER" property="sex" />
+        <result column="age" jdbcType="INTEGER" property="age" />
+        <result column="date" jdbcType="DATE" property="date" />
+      </association>
+      <association property="classroom" javaType="Classroom">
+        <id column="clid" jdbcType="INTEGER" property="clid" />
+        <result column="location" jdbcType="VARCHAR" property="location" />
+      </association>
+    </association>
+    <collection property="sc" ofType="Sc">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="cid" jdbcType="INTEGER" property="cid" />
+      <result column="sid" jdbcType="INTEGER" property="sid" />
+      <association property="students" javaType="Students">
+        <id column="sid" jdbcType="INTEGER" property="sid" />
+        <result column="sName" jdbcType="VARCHAR" property="sname" />
+        <result column="home" jdbcType="VARCHAR" property="home" />
+      </association>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    cid, classNname, classData
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from class
+    where cid = #{cid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from class
+    where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yan.entity.Class">
+    insert into class (cid, classNname, classData
+      )
+    values (#{cid,jdbcType=INTEGER}, #{classnname,jdbcType=VARCHAR}, #{classdata,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yan.entity.Class">
+    insert into class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="classnname != null">
+        classNname,
+      </if>
+      <if test="classdata != null">
+        classData,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="classnname != null">
+        #{classnname,jdbcType=VARCHAR},
+      </if>
+      <if test="classdata != null">
+        #{classdata,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yan.entity.Class">
+    update class
+    <set>
+      <if test="classnname != null">
+        classNname = #{classnname,jdbcType=VARCHAR},
+      </if>
+      <if test="classdata != null">
+        classData = #{classdata,jdbcType=DATE},
+      </if>
+    </set>
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yan.entity.Class">
+    update class
+    set classNname = #{classnname,jdbcType=VARCHAR},
+      classData = #{classdata,jdbcType=DATE}
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+  <select id="selectAc" resultMap="BaseResultMap">
+   SELECT c.cid,c.classNname,cl.location,al.aName,al.sex,al.age,s.sName FROM class AS c
+  LEFT JOIN ac AS a ON c.cid = a.cid
+  LEFT JOIN classroom AS cl ON a.clid = cl.clid
+  LEFT JOIN alecturer AS al ON a.aid = al.aid
+  LEFT JOIN sc AS sc ON c.cid = sc.cid
+  LEFT JOIN students AS s ON sc.sid=s.sid
+  </select>
+</mapper>
